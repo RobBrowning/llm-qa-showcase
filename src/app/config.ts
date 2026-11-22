@@ -22,8 +22,8 @@ export const MODELS = {
   },
   /** Relevance check: does the best paragraph really answer the question? (ADR 0010) */
   reranker: {
-    id: 'Xenova/ms-marco-MiniLM-L-6-v2',
-    revision: 'a09144355adeed5f58c8ed011d209bf8ee5a1fec',
+    id: 'Xenova/bge-reranker-base',
+    revision: '280bcc27a84e0b898c251e06fddb25171bd9b101',
     dtype: 'q8',
   },
 } as const;

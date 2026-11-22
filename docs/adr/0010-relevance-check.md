@@ -14,13 +14,17 @@ A 1.5B model can't reliably decide when it doesn't know. That decision should no
 
 ## Decision
 
-- After retrieval, a cross-encoder reranker, `Xenova/ms-marco-MiniLM-L-6-v2` (q8, pinned to `a09144355adeed5f58c8ed011d209bf8ee5a1fec`), scores how well the best paragraph answers the question.
+- After retrieval, a cross-encoder reranker, `Xenova/bge-reranker-base` (q8, pinned to `280bcc27a84e0b898c251e06fddb25171bd9b101`), scores how well the best paragraph answers the question.
 - Below 0, the model's own 50/50 point, the app replies with a fixed "I don't know" message and the bot is never asked. The response is marked `guarded: "relevance"`.
 - The threshold is the model's natural midpoint, not tuned to the eval set. The hold-out set checks it on unseen questions.
 - The `no-scope-guard` seeded defect switches this check off too, as it is part of deciding scope.
 
+## Model choice, from evidence
+
+The first reranker tried, `Xenova/ms-marco-MiniLM-L-6-v2`, fixed the dog question but refused "How big is the deposit?". `tests/eval/relevance-report.spec.ts` printed its scores: every answerable eval question scored 1.5 or more except that one, at -3.7, which was *below* the two truly unanswerable questions (-2.6, -3.5). No threshold could separate them, so the model was replaced rather than the threshold tuned. The report stays in the suite so the scores remain visible.
+
 ## Consequences
 
 - "Don't know" becomes a deterministic, explainable decision: a score and a line, not a prompt.
-- One more small model (about 23 MB) to download and run per question.
+- One more model (about 280 MB at q8) to download and run per question.
 - If a real question scores below 0, it is refused wrongly. The facts tests catch that, since they require `guarded: null`.
