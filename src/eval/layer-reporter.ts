@@ -25,14 +25,19 @@ export default class LayerReporter implements Reporter {
   }
 
   onEnd(_result: FullResult): void {
+    const lines: string[] = [];
     for (const [layer, r] of this.layers) {
       const total = r.passed + r.failed.length + r.skipped;
-      const line =
-        `${r.passed}/${total} passed` +
-        (r.failed.length ? ` (failed: ${r.failed.join(', ')})` : '') +
-        (r.skipped ? `, ${r.skipped} not run` : '');
-      console.log(process.env.CI ? `::notice title=layer ${layer}::${line}` : `layer ${layer}: ${line}`);
+      lines.push(
+        `${layer}: ${r.passed}/${total} passed` +
+          (r.failed.length ? ` (failed: ${r.failed.join(', ')})` : '') +
+          (r.skipped ? `, ${r.skipped} not run` : ''),
+      );
     }
+    if (!lines.length) return;
+    // GitHub shows at most 10 notices per step, so all layers go in one.
+    if (process.env.CI) console.log(`::notice title=layers::${lines.join('%0A')}`);
+    else lines.forEach((l) => console.log(`layer ${l}`));
   }
 
   printsToStdio(): boolean {
