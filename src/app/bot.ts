@@ -6,6 +6,7 @@ import {
   MODELS,
   REFUSAL_INJECTION,
   REFUSAL_SCOPE,
+  REFUSAL_UNGROUNDED,
   SCOPE_THRESHOLD,
 } from './config';
 import { defectOn } from './defects';
@@ -21,7 +22,7 @@ import { hfClassifier, hfGenerator, type ChatMessage, type Classify, type Genera
  * 3. Generation: a small Qwen model answers from the top two chunks only.
  */
 
-export type Guard = 'injection' | 'scope' | null;
+export type Guard = 'injection' | 'scope' | 'grounding' | null;
 
 export interface Reply {
   reply: string;
@@ -91,8 +92,24 @@ export class Bot {
       },
     ];
     const raw = await this.generate(messages, MAX_NEW_TOKENS);
-    return { reply: formatPrices(raw), sources: context.map((h) => h.chunk.id), guarded: null };
+    const sources = context.map((h) => h.chunk.id);
+
+    // Grounding check: plain code, not AI. Every price in the reply must appear
+    // in the context the model was given, or the reply is withheld.
+    const contextText = context.map((h) => h.chunk.text).join('\n');
+    if (!pricesGrounded(raw, contextText)) {
+      return { reply: REFUSAL_UNGROUNDED, sources, guarded: 'grounding' };
+    }
+    return { reply: formatPrices(raw), sources, guarded: null };
   }
+}
+
+/** Every £ amount in `reply` must equal one in `context` (compared as numbers). */
+export function pricesGrounded(reply: string, context: string): boolean {
+  const amounts = (text: string) =>
+    [...text.matchAll(/£\s?(\d+(?:\.\d{1,2})?)/g)].map((m) => Number(m[1]));
+  const allowed = new Set(amounts(context));
+  return amounts(reply).every((a) => allowed.has(a));
 }
 
 function pickContext(hits: Hit[]): Hit[] {

@@ -24,6 +24,14 @@ Show a realistic, layered way to test an AI chatbot: cheap deterministic checks 
 | 5 | UI and API | `tests/ui/` | Chat page states, ordering, loading, errors; API status codes and response shape | None (stub) | Every PR |
 | 6 | Hold-out | `tests/holdout/` | 12 fresh questions never used for tuning: proves fixes generalise (ADR 0005) | Bot | Labelled PRs and main |
 
+## Guards in the app
+
+| Guard | When it answers instead of the model | ADR |
+|---|---|---|
+| Injection | The classifier scores the message as an attack | 0002, 0006 |
+| Scope | No knowledge-base paragraph matches well enough | 0001 |
+| Grounding | The reply quotes a price that isn't in the paragraph the model was given | 0007 |
+
 ## Seeded defects
 
 See ADR 0003. Run with `npm run eval:defects` or the **Defect matrix** workflow.

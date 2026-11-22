@@ -45,3 +45,6 @@ export const REFUSAL_SCOPE =
 
 export const REFUSAL_INJECTION =
   "Sorry, I can't help with that request. I can answer questions about Wheelwise bike hire.";
+
+export const REFUSAL_UNGROUNDED =
+  "Sorry, I'm not sure about that price. Please check our price list or call us on 01632 960 400.";

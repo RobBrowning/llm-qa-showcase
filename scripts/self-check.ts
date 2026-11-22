@@ -7,7 +7,7 @@
 import assert from 'node:assert/strict';
 import { Retriever } from '../src/app/retrieval';
 import { SCOPE_THRESHOLD } from '../src/app/config';
-import { formatPrices } from '../src/app/bot';
+import { formatPrices, pricesGrounded } from '../src/app/bot';
 import { CALIBRATION, CONSISTENCY, GOLDEN, HOLDOUT, OUT_OF_SCOPE, reference } from '../src/eval/data';
 
 const r = new Retriever();
@@ -42,5 +42,11 @@ for (const h of HOLDOUT.facts) {
 for (const j of CALIBRATION) ok(reference(j.source).length > 0, `${j.id}: unknown source ${j.source}`);
 
 ok(formatPrices('It costs £40 or £12.5 or £ 7.00') === 'It costs £40.00 or £12.50 or £7.00', 'formatPrices normalises prices');
+
+const ctx = 'E-bike, half day: £25.00\nE-bike, full day: £40.00';
+ok(pricesGrounded('An e-bike is £40 for a full day.', ctx), 'grounding accepts a price from the context');
+ok(pricesGrounded('No prices here.', ctx), 'grounding accepts a reply with no prices');
+ok(!pricesGrounded('An e-bike costs £1.00 per hour.', ctx), 'grounding rejects a price not in the context');
+ok(!pricesGrounded('£40.00, or £35.00 at weekends.', ctx), 'grounding rejects one invented price among real ones');
 
 console.log(`self-check: ${checks} checks passed`);
