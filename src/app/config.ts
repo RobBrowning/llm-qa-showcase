@@ -34,8 +34,8 @@ export const MODEL_CACHE_DIR = process.env.MODEL_CACHE_DIR ?? '.cache/models';
 /** Retrieval score below which a question is treated as out of scope. */
 export const SCOPE_THRESHOLD = 1.5;
 
-/** Injection classifier score at or above which a message is blocked. */
-export const INJECTION_THRESHOLD = 0.9;
+/** Injection classifier score at or above which a message is blocked. 0.9 until ADR 0011. */
+export const INJECTION_THRESHOLD = 0.5;
 
 /**
  * Reranker logit below which the best paragraph is judged not to answer the
