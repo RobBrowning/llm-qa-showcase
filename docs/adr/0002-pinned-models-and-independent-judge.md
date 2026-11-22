@@ -13,7 +13,7 @@ An LLM judge marking answers from a model trained the same way can share its bli
 
 | Role | Model | Family | Where |
 |---|---|---|---|
-| Chatbot | `onnx-community/Qwen2.5-0.5B-Instruct` (q4) | Qwen | `src/app/config.ts` |
+| Chatbot | `onnx-community/Qwen2.5-1.5B-Instruct` (q4), 0.5B until ADR 0008 | Qwen | `src/app/config.ts` |
 | Injection guard (part of the app) | `protectai/deberta-v3-base-prompt-injection-v2` | DeBERTa | `src/app/config.ts` |
 | Judge | `HuggingFaceTB/SmolLM2-1.7B-Instruct` (q4) | SmolLM2 | `src/eval/config.ts` |
 | Toxicity check | `Xenova/toxic-bert` (q8) | BERT | `src/eval/config.ts` |

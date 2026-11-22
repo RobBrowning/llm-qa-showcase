@@ -8,10 +8,10 @@ export type ModelMode = 'hf' | 'stub';
 export const MODEL_MODE: ModelMode = process.env.MODEL_MODE === 'stub' ? 'stub' : 'hf';
 
 export const MODELS = {
-  /** The chatbot under test. Qwen family. */
+  /** The chatbot under test. Qwen family. 1.5B since round 2 (ADR 0008). */
   bot: {
-    id: 'onnx-community/Qwen2.5-0.5B-Instruct',
-    revision: 'cc5cc01a65cc3ff17bdb73a7de33d879f62599b0',
+    id: 'onnx-community/Qwen2.5-1.5B-Instruct',
+    revision: 'd54957e3af1be04546436e874a60fe386041b244',
     dtype: 'q4',
   },
   /** Input guard used by the app itself. */
