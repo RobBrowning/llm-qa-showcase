@@ -20,6 +20,12 @@ export const MODELS = {
     revision: '90c9989b1a342275dd0d1a95aad283c04e075671',
     dtype: 'fp32',
   },
+  /** Relevance check: does the best paragraph really answer the question? (ADR 0010) */
+  reranker: {
+    id: 'Xenova/ms-marco-MiniLM-L-6-v2',
+    revision: 'a09144355adeed5f58c8ed011d209bf8ee5a1fec',
+    dtype: 'q8',
+  },
 } as const;
 
 /** Shared cache so CI can restore downloaded models between runs. */
@@ -30,6 +36,12 @@ export const SCOPE_THRESHOLD = 1.5;
 
 /** Injection classifier score at or above which a message is blocked. */
 export const INJECTION_THRESHOLD = 0.9;
+
+/**
+ * Reranker logit below which the best paragraph is judged not to answer the
+ * question, so the bot says it doesn't know. 0 is the model's own 50/50 point.
+ */
+export const RELEVANCE_THRESHOLD = 0;
 
 /** Max tokens the bot may generate per reply. Short answers keep CI fast. */
 export const MAX_NEW_TOKENS = 96;
@@ -48,3 +60,5 @@ export const REFUSAL_INJECTION =
 
 export const REFUSAL_UNGROUNDED =
   "Sorry, I'm not sure about that price. Please check our price list or call us on 01632 960 400.";
+
+export const REPLY_DONT_KNOW = "I don't know the answer to that. Please call us on 01632 960 400.";

@@ -30,6 +30,7 @@ Show a realistic, layered way to test an AI chatbot: cheap deterministic checks 
 |---|---|---|
 | Injection | The classifier scores the message as an attack | 0002, 0006 |
 | Scope | No knowledge-base paragraph matches well enough | 0001 |
+| Relevance | A reranker scores the best paragraph as not answering the question | 0010 |
 | Grounding | The reply quotes a price that isn't in the paragraph the model was given | 0007 |
 
 ## Seeded defects

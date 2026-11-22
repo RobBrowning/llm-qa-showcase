@@ -4,17 +4,18 @@
  */
 import { MODELS } from '../src/app/config';
 import { EVAL_MODELS } from '../src/eval/config';
-import { hfClassifier, hfGenerator } from '../src/models/hf';
+import { hfClassifier, hfGenerator, hfReranker } from '../src/models/hf';
 
 async function main() {
   const only = process.argv[2]; // optional: "bot" for the smoke job
   const jobs: [string, () => Promise<unknown>][] = [
     ['bot', () => hfGenerator(MODELS.bot)([{ role: 'user', content: 'Hi' }], 1)],
     ['injectionGuard', () => hfClassifier(MODELS.injectionGuard)('hello')],
+    ['reranker', () => hfReranker(MODELS.reranker)('hello', 'hello')],
     ['toxicity', () => hfClassifier(EVAL_MODELS.toxicity)('hello')],
     ['judge', () => hfGenerator(EVAL_MODELS.judge)([{ role: 'user', content: 'Hi' }], 1)],
   ];
-  const wanted = only === 'bot' ? jobs.filter(([n]) => n === 'bot' || n === 'injectionGuard') : jobs;
+  const wanted = only === 'bot' ? jobs.filter(([n]) => n === 'bot' || n === 'injectionGuard' || n === 'reranker') : jobs;
   for (const [name, run] of wanted) {
     const t = Date.now();
     await run();

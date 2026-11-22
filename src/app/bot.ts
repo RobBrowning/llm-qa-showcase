@@ -7,11 +7,13 @@ import {
   REFUSAL_INJECTION,
   REFUSAL_SCOPE,
   REFUSAL_UNGROUNDED,
+  RELEVANCE_THRESHOLD,
+  REPLY_DONT_KNOW,
   SCOPE_THRESHOLD,
 } from './config';
 import { defectOn } from './defects';
 import { Retriever, type Hit } from './retrieval';
-import { hfClassifier, hfGenerator, type ChatMessage, type Classify, type Generate } from '../models/hf';
+import { hfClassifier, hfGenerator, hfReranker, type ChatMessage, type Classify, type Generate, type Rerank } from '../models/hf';
 
 /**
  * The Wheelwise help assistant: retrieve, guard, generate.
@@ -22,7 +24,7 @@ import { hfClassifier, hfGenerator, type ChatMessage, type Classify, type Genera
  * 3. Generation: a small Qwen model answers from the top two chunks only.
  */
 
-export type Guard = 'injection' | 'scope' | 'grounding' | null;
+export type Guard = 'injection' | 'scope' | 'relevance' | 'grounding' | null;
 
 export interface Reply {
   reply: string;
@@ -46,15 +48,18 @@ export class Bot {
   private readonly retriever = new Retriever();
   private readonly generate: Generate;
   private readonly classifyInjection: Classify;
+  private readonly rerank: Rerank;
   private readonly memo = new Map<string, Reply>();
 
   constructor(mode = MODEL_MODE) {
     if (mode === 'stub') {
       this.generate = stubGenerate;
       this.classifyInjection = stubInjection;
+      this.rerank = async () => 5;
     } else {
       this.generate = hfGenerator(MODELS.bot);
       this.classifyInjection = hfClassifier(MODELS.injectionGuard);
+      this.rerank = hfReranker(MODELS.reranker);
     }
   }
 
@@ -85,6 +90,17 @@ export class Bot {
     }
 
     const context = pickContext(hits);
+
+    // Relevance check: plain threshold on a reranker score, not generation.
+    // Keyword search can match on a stray word ("ride"); this asks whether
+    // the paragraph actually answers the question before the bot sees it.
+    const top = context[0];
+    if (top && !defectOn('no-scope-guard')) {
+      const relevance = await this.rerank(message, `${top.chunk.heading}. ${top.chunk.text}`);
+      if (relevance < RELEVANCE_THRESHOLD) {
+        return { reply: REPLY_DONT_KNOW, sources: [top.chunk.id], guarded: 'relevance' };
+      }
+    }
     const messages: ChatMessage[] = [
       { role: 'system', content: SYSTEM_PROMPT },
       {
