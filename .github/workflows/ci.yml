@@ -1,0 +1,102 @@
+name: CI
+
+# Fast path on every PR: offline checks, UI tests, and the @smoke evals on the
+# real bot. The full eval (judge, toxicity, public dataset) runs on main,
+# weekly, and on demand, because it downloads about 2.5 GB of models. ADR 0001.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: '23 5 * * 1' # Monday morning full eval catches drift in pinned inputs
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run check:unit
+      - run: npm run test:list
+
+  ui:
+    needs: check
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:ui
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report-ui
+          path: playwright-report/
+          retention-days: 14
+
+  eval-smoke:
+    needs: check
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - uses: actions/cache@v4
+        with:
+          path: .cache/models
+          key: models-bot-${{ hashFiles('src/app/config.ts') }}
+      - run: npm run models:warm -- bot
+      - run: npx playwright test --project=eval --grep @smoke
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report-eval-smoke
+          path: playwright-report/
+          retention-days: 14
+
+  eval-full:
+    needs: check
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - uses: actions/cache@v4
+        with:
+          path: .cache/models
+          key: models-all-${{ hashFiles('src/app/config.ts', 'src/eval/config.ts') }}
+      - run: npm run models:warm
+      - run: npm run data:fetch
+      - run: npm run test:eval
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report-eval-full
+          path: playwright-report/
+          retention-days: 30

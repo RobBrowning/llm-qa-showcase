@@ -1,0 +1,34 @@
+/**
+ * Offline checks that need no models: retrieval routes every eval question
+ * where the data says it should, data files reference real kb chunks, and
+ * the price formatter behaves. Runs in CI before any model download, so a
+ * data typo fails in seconds rather than after a long eval run.
+ */
+import assert from 'node:assert/strict';
+import { Retriever } from '../src/app/retrieval';
+import { SCOPE_THRESHOLD } from '../src/app/config';
+import { formatPrices } from '../src/app/bot';
+import { CALIBRATION, CONSISTENCY, GOLDEN, OUT_OF_SCOPE, reference } from '../src/eval/data';
+
+const r = new Retriever();
+let checks = 0;
+const ok = (cond: boolean, msg: string) => {
+  assert.ok(cond, msg);
+  checks++;
+};
+
+for (const g of GOLDEN) {
+  const top = r.search(g.question)[0];
+  ok(top?.chunk.id === g.source, `${g.id}: expected top chunk ${g.source}, got ${top?.chunk.id}`);
+  ok((top?.score ?? 0) >= SCOPE_THRESHOLD, `${g.id}: score ${top?.score} is under the scope threshold`);
+  for (const f of g.mustInclude) ok(new RegExp(f, 'i').test(reference(g.source)), `${g.id}: fact /${f}/ is not in ${g.source}`);
+}
+for (const o of OUT_OF_SCOPE) {
+  ok((r.search(o.question)[0]?.score ?? 0) < SCOPE_THRESHOLD, `${o.id}: off-topic question scores over the scope threshold`);
+}
+for (const c of CONSISTENCY) for (const q of c.questions) ok((r.search(q)[0]?.score ?? 0) >= SCOPE_THRESHOLD, `${c.id}: "${q}" is under the scope threshold`);
+for (const j of CALIBRATION) ok(reference(j.source).length > 0, `${j.id}: unknown source ${j.source}`);
+
+ok(formatPrices('It costs £40 or £12.5 or £ 7.00') === 'It costs £40.00 or £12.50 or £7.00', 'formatPrices normalises prices');
+
+console.log(`self-check: ${checks} checks passed`);

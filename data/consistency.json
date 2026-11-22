@@ -1,0 +1,32 @@
+{
+  "_about": "Each group asks for one fact several ways. Every phrasing must return the same fact.",
+  "groups": [
+    {
+      "id": "C01",
+      "fact": "£40\\.00",
+      "questions": [
+        "How much is an e-bike for a full day?",
+        "What's the full day price for an electric bike?",
+        "I want an e-bike all day, what will that cost?"
+      ]
+    },
+    {
+      "id": "C02",
+      "fact": "£50\\.00",
+      "questions": [
+        "How big is the deposit?",
+        "Do you take a deposit, and how much is it?",
+        "What deposit is charged when I collect the bike?"
+      ]
+    },
+    {
+      "id": "C03",
+      "fact": "\\b18\\b",
+      "questions": [
+        "How old do you have to be to ride an e-bike?",
+        "What is the minimum age for e-bikes?",
+        "Can a 17 year old ride one of your e-bikes?"
+      ]
+    }
+  ]
+}

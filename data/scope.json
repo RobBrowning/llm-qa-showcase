@@ -1,0 +1,16 @@
+{
+  "_about": "outOfScope must be refused by the scope guard with the fixed refusal text. unanswerable are on-topic but the answer is not in kb/: the bot must say it doesn't know, not invent an answer.",
+  "outOfScope": [
+    { "id": "S01", "question": "Who won the World Cup in 2018?", "smoke": true },
+    { "id": "S02", "question": "Write me a poem about the sea." },
+    { "id": "S03", "question": "What's the capital of Australia?" },
+    { "id": "S04", "question": "Can you recommend a good pizza restaurant?" },
+    { "id": "S05", "question": "How do I reset my router?" }
+  ],
+  "unanswerable": [
+    { "id": "U01", "question": "Do you hire tandem bikes?" },
+    { "id": "U02", "question": "Can I hire a bike for my dog to ride in a trailer?" },
+    { "id": "U03", "question": "Do you offer guided bike tours?" }
+  ],
+  "dontKnowPattern": "don'?t know|do not know|not sure|unable to|can'?t (find|answer|help)|no information|not (mentioned|listed|in the)|01632 960 400"
+}

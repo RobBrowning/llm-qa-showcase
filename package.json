@@ -1,0 +1,34 @@
+{
+  "name": "llm-qa-showcase",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Testing an AI chatbot: Playwright + TypeScript eval suite for a small RAG chatbot running open Hugging Face models locally.",
+  "author": "Rob Browning",
+  "license": "MIT",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "start": "tsx src/app/server.ts",
+    "start:stub": "MODEL_MODE=stub tsx src/app/server.ts",
+    "data:fetch": "tsx scripts/fetch-adversarial.mts",
+    "models:warm": "tsx scripts/warm-models.ts",
+    "test": "playwright test",
+    "test:ui": "playwright test --project=ui",
+    "test:eval": "playwright test --project=eval",
+    "test:smoke": "playwright test --grep @smoke",
+    "test:list": "playwright test --list",
+    "eval:defects": "tsx scripts/defect-matrix.ts",
+    "check:unit": "tsx scripts/self-check.ts",
+    "typecheck": "tsc --noEmit",
+    "report": "playwright show-report"
+  },
+  "dependencies": {
+    "@huggingface/transformers": "4.3.2"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.65.0",
+    "@types/node": "^22.20.5",
+    "hyparquet": "1.33.1",
+    "tsx": "4.23.15",
+    "typescript": "^5.9.3"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "_about": "Hand-labelled answers used to check the LLM judge before its verdicts are trusted. grounded=true means the answer is correct and fully supported by the reference chunk. Labels must be reviewed by a human before each change to this file.",
+  "items": [
+    { "id": "J01", "source": "hire-and-pricing#bike-types-and-prices", "question": "How much is an e-bike for a full day?", "answer": "An e-bike costs £40.00 for a full day.", "grounded": true },
+    { "id": "J02", "source": "hire-and-pricing#bike-types-and-prices", "question": "How much is an e-bike for a full day?", "answer": "An e-bike costs £35.00 for a full day.", "grounded": false },
+    { "id": "J03", "source": "bookings-and-refunds#deposit", "question": "How big is the deposit?", "answer": "We take a £50.00 refundable deposit on a card when you collect the bike.", "grounded": true },
+    { "id": "J04", "source": "bookings-and-refunds#deposit", "question": "How big is the deposit?", "answer": "There is no deposit, you just pay for the hire.", "grounded": false },
+    { "id": "J05", "source": "rules-and-safety#age-and-id", "question": "How old do you have to be to ride an e-bike?", "answer": "You must be 18 or older to ride an e-bike.", "grounded": true },
+    { "id": "J06", "source": "rules-and-safety#age-and-id", "question": "How old do you have to be to ride an e-bike?", "answer": "Anyone aged 12 or over can ride an e-bike.", "grounded": false },
+    { "id": "J07", "source": "bookings-and-refunds#cancellations-and-refunds", "question": "What refund do I get if I cancel less than 24 hours before?", "answer": "You get a 50% refund if you cancel less than 24 hours before the start.", "grounded": true },
+    { "id": "J08", "source": "bookings-and-refunds#cancellations-and-refunds", "question": "What refund do I get if I cancel less than 24 hours before?", "answer": "You always get a full refund, whenever you cancel.", "grounded": false },
+    { "id": "J09", "source": "locations-and-hours#opening-hours", "question": "What are your opening hours on Sunday?", "answer": "On Sunday we are open from 9am to 5pm.", "grounded": true },
+    { "id": "J10", "source": "locations-and-hours#opening-hours", "question": "What are your opening hours on Sunday?", "answer": "We are open 24 hours a day on Sundays and bank holidays.", "grounded": false },
+    { "id": "J11", "source": "rules-and-safety#damage-and-breakdowns", "question": "What number do I call if my bike breaks down?", "answer": "Call the breakdown line on 01632 960 418.", "grounded": true },
+    { "id": "J12", "source": "rules-and-safety#damage-and-breakdowns", "question": "What number do I call if my bike breaks down?", "answer": "Call 999 and the police will collect the bike.", "grounded": false }
+  ]
+}

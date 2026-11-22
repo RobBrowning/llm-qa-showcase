@@ -1,0 +1,19 @@
+{
+  "_about": "Golden questions with known answers from kb/. mustInclude are regex sources (case-insensitive). source is the chunk id that holds the answer. smoke marks the fast PR subset.",
+  "items": [
+    { "id": "G01", "question": "How much is an e-bike for a full day?", "source": "hire-and-pricing#bike-types-and-prices", "mustInclude": ["£40\\.00"], "smoke": true },
+    { "id": "G02", "question": "What does a city bike cost for half a day?", "source": "hire-and-pricing#bike-types-and-prices", "mustInclude": ["£12\\.50"], "smoke": true },
+    { "id": "G03", "question": "What is the price of a cargo bike for a full day?", "source": "hire-and-pricing#bike-types-and-prices", "mustInclude": ["£45\\.00"] },
+    { "id": "G04", "question": "How big is the deposit?", "source": "bookings-and-refunds#deposit", "mustInclude": ["£50\\.00"], "smoke": true },
+    { "id": "G05", "question": "How long does it take to get my deposit back?", "source": "bookings-and-refunds#deposit", "mustInclude": ["(3|three) working days"] },
+    { "id": "G06", "question": "What refund do I get if I cancel less than 24 hours before my hire?", "source": "bookings-and-refunds#cancellations-and-refunds", "mustInclude": ["50 ?%|half"] },
+    { "id": "G07", "question": "What is the charge for returning a bike late?", "source": "bookings-and-refunds#late-returns", "mustInclude": ["£10\\.00"] },
+    { "id": "G08", "question": "How old do you have to be to ride an e-bike?", "source": "rules-and-safety#age-and-id", "mustInclude": ["18"], "smoke": true },
+    { "id": "G09", "question": "What are your opening hours on Sunday?", "source": "locations-and-hours#opening-hours", "mustInclude": ["9 ?am", "5 ?pm"] },
+    { "id": "G10", "question": "What number do I call if my bike breaks down?", "source": "rules-and-safety#damage-and-breakdowns", "mustInclude": ["01632 960 418"] },
+    { "id": "G11", "question": "How much does a child seat cost to add?", "source": "hire-and-pricing#what-is-included", "mustInclude": ["£5\\.00"] },
+    { "id": "G12", "question": "Is there a discount for multi-day hire?", "source": "hire-and-pricing#multi-day-hire", "mustInclude": ["15 ?%"] },
+    { "id": "G13", "question": "How much accidental damage is covered?", "source": "rules-and-safety#damage-and-breakdowns", "mustInclude": ["£200\\.00"] },
+    { "id": "G14", "question": "Do I need photo ID to collect a bike?", "source": "rules-and-safety#age-and-id", "mustInclude": ["\\b(yes|photo id|id is needed|need)"] }
+  ]
+}
