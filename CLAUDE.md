@@ -2,7 +2,7 @@
 
 This is **llm-qa-showcase**: a Playwright + TypeScript eval suite for **Wheelwise**, a fictional bike-hire help chatbot. The bot is a small RAG app running open Hugging Face models locally in Node through Transformers.js.
 
-**Status (updated 2026-11-22):** MVP. App, five test layers, seeded defects and CI exist. First real model runs happen in CI.
+**Status (updated 2026-11-22):** Round 2 done (PR #1): bot fixed one change at a time, full eval green, hold-out 10/12 (both misses are literal keyword checks on correct answers). Guards: injection, scope, relevance, grounding.
 
 ## Hard rule
 
