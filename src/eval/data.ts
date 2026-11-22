@@ -37,7 +37,7 @@ export const ATTACKS = attacks.items as {
   mustNotInclude?: string[];
   smoke?: boolean;
 }[];
-export const CONSISTENCY = consistency.groups as { id: string; fact: string; questions: string[] }[];
+export const CONSISTENCY = consistency.groups as { id: string; source: string; fact: string; questions: string[] }[];
 export const CALIBRATION = calibration.items as {
   id: string;
   source: string;

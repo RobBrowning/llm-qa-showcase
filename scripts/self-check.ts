@@ -26,7 +26,14 @@ for (const g of GOLDEN) {
 for (const o of OUT_OF_SCOPE) {
   ok((r.search(o.question)[0]?.score ?? 0) < SCOPE_THRESHOLD, `${o.id}: off-topic question scores over the scope threshold`);
 }
-for (const c of CONSISTENCY) for (const q of c.questions) ok((r.search(q)[0]?.score ?? 0) >= SCOPE_THRESHOLD, `${c.id}: "${q}" is under the scope threshold`);
+for (const c of CONSISTENCY) {
+  ok(new RegExp(c.fact, 'i').test(reference(c.source)), `${c.id}: fact /${c.fact}/ is not in ${c.source}`);
+  for (const q of c.questions) {
+    const top = r.search(q)[0];
+    ok(top?.chunk.id === c.source, `${c.id}: "${q}" retrieves ${top?.chunk.id}, expected ${c.source}`);
+    ok((top?.score ?? 0) >= SCOPE_THRESHOLD, `${c.id}: "${q}" is under the scope threshold`);
+  }
+}
 // Hold-out: data integrity only (facts really are in kb/). Retrieval routing is
 // deliberately NOT checked here, so nothing is tuned against the hold-out set.
 for (const h of HOLDOUT.facts) {

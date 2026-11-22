@@ -16,7 +16,11 @@ export default class LayerReporter implements Reporter {
     const row = this.layers.get(file) ?? { passed: 0, failed: [], skipped: 0 };
     if (result.status === 'passed') row.passed++;
     else if (result.status === 'skipped') row.skipped++;
-    else row.failed.push(test.title.split(' ')[0] ?? test.title);
+    else {
+      // Data-driven tests start with an id (G01, C03). Others get a short title.
+      const first = test.title.split(' ')[0] ?? '';
+      row.failed.push(/^[A-Z]+\d+$/.test(first) ? first : `"${test.title.split(' ').slice(0, 5).join(' ')}..."`);
+    }
     this.layers.set(file, row);
   }
 
