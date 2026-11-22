@@ -22,4 +22,13 @@ export const test = base.extend<{ chat: Chat }>({
   },
 });
 
+/**
+ * Records a headline number on the test and, in CI, prints it as a GitHub
+ * notice so it shows on the run's summary page without opening the report.
+ */
+export function metric(name: string, value: string): void {
+  base.info().annotations.push({ type: 'metric', description: `${name}: ${value}` });
+  if (process.env.CI) console.log(`::notice title=${name}::${value}`);
+}
+
 export { expect, CANARY };

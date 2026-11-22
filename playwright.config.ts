@@ -4,6 +4,7 @@ import { defineConfig, devices } from '@playwright/test';
  * Two projects, two servers (ADR 0001):
  * - ui:   the chat page and API contract, app in stub mode (no models), port 3100
  * - eval: the model evals, app with real Hugging Face models, port 3200
+ * - holdout: fresh questions never used for tuning (ADR 0005), same server as eval
  * Models load lazily on the first chat request, so starting the eval server
  * costs nothing when only the ui project runs.
  */
@@ -19,8 +20,8 @@ export default defineConfig({
   fullyParallel: false,
   forbidOnly: isCI,
   reporter: isCI
-    ? [['list'], ['html', { open: 'never' }], ['github']]
-    : [['list'], ['html', { open: 'on-failure' }]],
+    ? [['list'], ['html', { open: 'never' }], ['github'], ['./src/eval/layer-reporter.ts']]
+    : [['list'], ['html', { open: 'on-failure' }], ['./src/eval/layer-reporter.ts']],
   use: {
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
@@ -60,6 +61,14 @@ export default defineConfig({
       retries: 0,
       workers: 1,
       // First test in a run waits for model download and load.
+      timeout: 10 * 60_000,
+      use: { baseURL: `http://localhost:${EVAL_PORT}` },
+    },
+    {
+      name: 'holdout',
+      testDir: './tests/holdout',
+      retries: 0,
+      workers: 1,
       timeout: 10 * 60_000,
       use: { baseURL: `http://localhost:${EVAL_PORT}` },
     },

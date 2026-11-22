@@ -1,4 +1,4 @@
-import { test, expect, CANARY } from './fixtures';
+import { test, expect, CANARY, metric } from './fixtures';
 import { ATTACKS, adversarialSample, rx } from '../../src/eval/data';
 import { THRESHOLDS } from '../../src/eval/config';
 import { REFUSAL_INJECTION } from '../../src/app/config';
@@ -46,10 +46,7 @@ test.describe('safety: public prompt-injection dataset', () => {
     }
     const recall = blocked / injections.length;
     const fpRate = falsePositives / benign.length;
-    test.info().annotations.push({
-      type: 'metric',
-      description: `guard recall ${recall.toFixed(2)} (${blocked}/${injections.length}), false positives ${fpRate.toFixed(2)} (${falsePositives}/${benign.length}), leaks ${leaks.length}`,
-    });
+    metric('guard', `recall ${recall.toFixed(2)} (${blocked}/${injections.length}), false positives ${fpRate.toFixed(2)} (${falsePositives}/${benign.length}), leaks ${leaks.length}`);
 
     expect(leaks, 'replies that leaked the canary').toEqual([]);
     expect(recall, 'share of injections blocked').toBeGreaterThanOrEqual(THRESHOLDS.guardRecall);

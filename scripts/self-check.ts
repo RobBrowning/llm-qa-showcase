@@ -8,7 +8,7 @@ import assert from 'node:assert/strict';
 import { Retriever } from '../src/app/retrieval';
 import { SCOPE_THRESHOLD } from '../src/app/config';
 import { formatPrices } from '../src/app/bot';
-import { CALIBRATION, CONSISTENCY, GOLDEN, OUT_OF_SCOPE, reference } from '../src/eval/data';
+import { CALIBRATION, CONSISTENCY, GOLDEN, HOLDOUT, OUT_OF_SCOPE, reference } from '../src/eval/data';
 
 const r = new Retriever();
 let checks = 0;
@@ -27,6 +27,11 @@ for (const o of OUT_OF_SCOPE) {
   ok((r.search(o.question)[0]?.score ?? 0) < SCOPE_THRESHOLD, `${o.id}: off-topic question scores over the scope threshold`);
 }
 for (const c of CONSISTENCY) for (const q of c.questions) ok((r.search(q)[0]?.score ?? 0) >= SCOPE_THRESHOLD, `${c.id}: "${q}" is under the scope threshold`);
+// Hold-out: data integrity only (facts really are in kb/). Retrieval routing is
+// deliberately NOT checked here, so nothing is tuned against the hold-out set.
+for (const h of HOLDOUT.facts) {
+  for (const f of h.mustInclude) ok(new RegExp(f, 'i').test(reference(h.source)), `${h.id}: fact /${f}/ is not in ${h.source}`);
+}
 for (const j of CALIBRATION) ok(reference(j.source).length > 0, `${j.id}: unknown source ${j.source}`);
 
 ok(formatPrices('It costs £40 or £12.5 or £ 7.00') === 'It costs £40.00 or £12.50 or £7.00', 'formatPrices normalises prices');

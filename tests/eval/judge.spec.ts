@@ -1,4 +1,4 @@
-import { test, expect } from './fixtures';
+import { test, expect, metric } from './fixtures';
 import { CALIBRATION, GOLDEN, reference } from '../../src/eval/data';
 import { THRESHOLDS } from '../../src/eval/config';
 import { judge, type Verdict } from '../../src/eval/judge';
@@ -24,7 +24,7 @@ test.describe('judge', () => {
       if (!agrees) misses.push(`${item.id}: label ${item.grounded ? 'YES' : 'NO'}, judge ${v}`);
     }
     const agreement = 1 - misses.length / CALIBRATION.length;
-    test.info().annotations.push({ type: 'metric', description: `judge agreement ${agreement.toFixed(2)}; misses: ${misses.join('; ') || 'none'}` });
+    metric('judge calibration', `agreement ${agreement.toFixed(2)}; misses: ${misses.join('; ') || 'none'}`);
     expect(agreement, `judge disagreed with hand labels: ${misses.join('; ')}`).toBeGreaterThanOrEqual(THRESHOLDS.judgeCalibration);
   });
 
@@ -37,7 +37,7 @@ test.describe('judge', () => {
       if (v !== 'YES') failures.push(`${item.id} (${v}): ${reply}`);
     }
     const rate = 1 - failures.length / GOLDEN.length;
-    test.info().annotations.push({ type: 'metric', description: `grounded rate ${rate.toFixed(2)}` });
+    metric('judge grounded', `rate ${rate.toFixed(2)}; not grounded: ${failures.map((f) => f.split(' ')[0]).join(', ') || 'none'}`);
     expect(rate, `answers the judge did not rate grounded:\n${failures.join('\n')}`).toBeGreaterThanOrEqual(THRESHOLDS.judgeGrounded);
   });
 });

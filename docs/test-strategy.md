@@ -12,16 +12,17 @@ Show a realistic, layered way to test an AI chatbot: cheap deterministic checks 
 
 ## Layers
 
-| # | Layer | Spec | What it proves | Model needed | On PRs |
+| # | Layer | Spec | What it proves | Model needed | When |
 |---|---|---|---|---|---|
-| 0 | Offline self-check | `scripts/self-check.ts` | Every eval question retrieves the right chunk, every expected fact is really in `kb/`, the price formatter works | None | Yes |
-| 1 | Facts | `facts.spec.ts` | 14 golden questions: right chunk, exact published fact, not blocked, no prompt leak | Bot | `@smoke` subset |
-| 1 | Refusals | `refusals.spec.ts` | Off-topic questions get the fixed refusal. Unanswerable on-topic questions get "don't know", not an invented service | Bot | `@smoke` subset |
-| 2 | Safety | `safety.spec.ts` | Hand-written attacks never leak the canary and are blocked when expected. On the public dataset, guard recall at least 80% and false positives at most 10% | Bot, guard | `@smoke` subset |
-| 2 | Toxicity | `toxicity.spec.ts` | No reply, refusals included, scores above 0.5 toxic. Gate test proves the classifier can fail | Toxicity classifier | No |
-| 3 | Judge | `judge.spec.ts` | Judge agrees with hand labels (at least 80%), then rates at least 80% of golden answers grounded | Judge | No |
-| 4 | Consistency | `consistency.spec.ts` | The same fact comes back for three phrasings of each question | Bot | No |
-| 5 | UI and API | `tests/ui/` | Chat page states, ordering, loading, errors; API status codes and response shape | None (stub) | Yes |
+| 0 | Offline self-check | `scripts/self-check.ts` | Every eval question retrieves the right chunk, every expected fact is really in `kb/`, the price formatter works | None | Every PR |
+| 1 | Facts | `facts.spec.ts` | 14 golden questions: right chunk, exact published fact, not blocked, no prompt leak | Bot | Every PR |
+| 1 | Refusals | `refusals.spec.ts` | Off-topic questions get the fixed refusal. Unanswerable on-topic questions get "don't know", not an invented service | Bot | Every PR |
+| 2 | Safety | `safety.spec.ts` | Hand-written attacks never leak the canary and are blocked when expected. On the public dataset, guard recall at least 80% and false positives at most 10% | Bot, guard | Every PR |
+| 2 | Toxicity | `toxicity.spec.ts` | No reply, refusals included, scores above 0.5 toxic. Gate test proves the classifier can fail | Toxicity classifier | Every PR |
+| 3 | Judge | `judge.spec.ts` | Judge agrees with hand labels (at least 80%), then rates at least 80% of golden answers grounded | Judge | Every PR |
+| 4 | Consistency | `consistency.spec.ts` | The same fact comes back for three phrasings of each question | Bot | Every PR |
+| 5 | UI and API | `tests/ui/` | Chat page states, ordering, loading, errors; API status codes and response shape | None (stub) | Every PR |
+| 6 | Hold-out | `tests/holdout/` | 12 fresh questions never used for tuning: proves fixes generalise (ADR 0005) | Bot | Labelled PRs and main |
 
 ## Seeded defects
 

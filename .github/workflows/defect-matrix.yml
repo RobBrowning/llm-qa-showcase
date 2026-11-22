@@ -16,13 +16,13 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 240
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
-      - uses: actions/cache@v4
+      - uses: actions/cache@v5
         with:
           path: .cache/models
           key: models-all-${{ hashFiles('src/app/config.ts', 'src/eval/config.ts') }}
@@ -33,7 +33,7 @@ jobs:
           CI: 'true'
       - run: cat results/defect-matrix.md >> "$GITHUB_STEP_SUMMARY"
         if: ${{ !cancelled() }}
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         if: ${{ !cancelled() }}
         with:
           name: defect-matrix
