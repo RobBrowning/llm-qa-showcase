@@ -63,11 +63,20 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
-      - uses: actions/cache@v5
+      # Restore and save separately: a plain cache step only saves when the
+      # job passes, so a failing eval re-downloaded every model on every run.
+      - uses: actions/cache/restore@v5
+        id: models
         with:
           path: .cache/models
           key: models-all-${{ hashFiles('src/app/config.ts', 'src/eval/config.ts') }}
+          restore-keys: models-
       - run: npm run models:warm
+      - uses: actions/cache/save@v5
+        if: steps.models.outputs.cache-hit != 'true'
+        with:
+          path: .cache/models
+          key: ${{ steps.models.outputs.cache-primary-key }}
       - run: npm run data:fetch
       - run: npm run test:eval
       - uses: actions/upload-artifact@v6
@@ -89,10 +98,13 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
-      - uses: actions/cache@v5
+      # Restore only: this job warms a subset of models, so it must not save.
+      - uses: actions/cache/restore@v5
+        id: models
         with:
           path: .cache/models
           key: models-all-${{ hashFiles('src/app/config.ts', 'src/eval/config.ts') }}
+          restore-keys: models-
       - run: npm run models:warm -- bot
       - run: npm run test:holdout
       - uses: actions/upload-artifact@v6
