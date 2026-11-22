@@ -89,13 +89,7 @@ export class Bot {
       { role: 'system', content: SYSTEM_PROMPT },
       {
         role: 'user',
-        // The don't-know rule is repeated next to the question: small models
-        // follow the instruction nearest the end of the prompt most reliably.
-        content:
-          `CONTEXT:\n${context.map((h) => `[${h.chunk.heading}] ${h.chunk.text}`).join('\n\n') || '(none)'}\n\n` +
-          `QUESTION: ${message}\n\n` +
-          `If the CONTEXT does not mention the thing this QUESTION asks about, reply only: ` +
-          `"I don't know. Please call us on 01632 960 400."`,
+        content: `CONTEXT:\n${context.map((h) => `[${h.chunk.heading}] ${h.chunk.text}`).join('\n\n') || '(none)'}\n\nQUESTION: ${message}`,
       },
     ];
     const raw = await this.generate(messages, MAX_NEW_TOKENS);
