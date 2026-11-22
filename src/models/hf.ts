@@ -16,6 +16,8 @@ export interface ModelSpec {
   id: string;
   revision: string;
   dtype: string;
+  /** Number of external weight files for large models (model_q4.onnx_data, _data_1, ...). */
+  externalData?: number;
 }
 
 export interface ChatMessage {
@@ -40,6 +42,7 @@ function load(task: string, spec: ModelSpec): Promise<AnyPipeline> {
     p = (pipeline as unknown as (t: string, m: string, o: object) => Promise<AnyPipeline>)(task, spec.id, {
       revision: spec.revision,
       dtype: spec.dtype,
+      ...(spec.externalData ? { use_external_data_format: spec.externalData } : {}),
     });
     cache.set(key, p);
   }

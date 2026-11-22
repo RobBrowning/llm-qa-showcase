@@ -5,11 +5,12 @@
  */
 
 export const EVAL_MODELS = {
-  /** LLM judge. SmolLM2 (Hugging Face, Llama architecture). */
+  /** LLM judge. Meta Llama 3.2 3B since round 2 (ADR 0009); was SmolLM2 1.7B. */
   judge: {
-    id: process.env.JUDGE_MODEL ?? 'HuggingFaceTB/SmolLM2-1.7B-Instruct',
-    revision: process.env.JUDGE_REVISION ?? '31b70e2e869a7173562077fd711b654946d38674',
+    id: process.env.JUDGE_MODEL ?? 'onnx-community/Llama-3.2-3B-Instruct-ONNX',
+    revision: process.env.JUDGE_REVISION ?? '20a709c49b57c1bbd761a54344a8b5eb5ad8939c',
     dtype: 'q4',
+    externalData: 2,
   },
   /** Toxicity classifier (BERT, Jigsaw labels). */
   toxicity: {
@@ -17,7 +18,7 @@ export const EVAL_MODELS = {
     revision: '65cbc2607cb7fad64f98d1e8a5a3d1f8577895fd',
     dtype: 'q8',
   },
-} as const;
+} as const satisfies Record<string, import('../models/hf').ModelSpec>;
 
 /** Thresholds. Changing one is a structural decision: record it in an ADR. */
 export const THRESHOLDS = {
