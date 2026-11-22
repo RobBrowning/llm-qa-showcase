@@ -38,10 +38,11 @@ export const SCOPE_THRESHOLD = 1.5;
 export const INJECTION_THRESHOLD = 0.9;
 
 /**
- * Reranker logit below which the best paragraph is judged not to answer the
- * question, so the bot says it doesn't know. 0 is the model's own 50/50 point.
+ * Reranker score below which the best paragraph is judged not to answer the
+ * question, so the bot says it doesn't know. Set from eval evidence (ADR 0010):
+ * answerable questions scored -3.2 or more, unanswerable -5.4 or less.
  */
-export const RELEVANCE_THRESHOLD = 0;
+export const RELEVANCE_THRESHOLD = -4.3;
 
 /** Max tokens the bot may generate per reply. Short answers keep CI fast. */
 export const MAX_NEW_TOKENS = 96;
