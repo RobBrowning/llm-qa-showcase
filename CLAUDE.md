@@ -35,7 +35,7 @@ Never use an em dash or en dash in any file. Use a colon, comma or full stop ins
 - Any new classifier or judge check needs a gate test that proves it can fail (see `toxicity.spec.ts` and the judge calibration).
 - Never edit a hold-out question to make it pass. Fix the bot, then add new hold-out questions (ADR 0005).
 - The hold-out job is report-only in CI (ADR 0012). When it was run for a PR, state its result in the PR description.
-- No retries on the `eval` project. A flaky eval is a finding, not noise.
+- No retries on the `eval` or `holdout` projects. A flaky eval is a finding, not noise.
 - UI tests run in stub mode and never assert on model wording.
 - Seeded defects stay behind the `DEFECT` env var. Each one is listed in `docs/test-strategy.md` with the layer expected to catch it.
 - Locators: `getByTestId` (attribute `data-test`) or `getByRole`. No CSS chains, no XPath.
