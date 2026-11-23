@@ -21,7 +21,7 @@ A 1.5B model can't reliably decide when it doesn't know. That decision should no
 
 ## Model choice, from evidence
 
-The first reranker tried, `Xenova/ms-marco-MiniLM-L-6-v2`, fixed the dog question but refused "How big is the deposit?". `tests/eval/relevance-report.spec.ts` printed its scores: every answerable eval question scored 1.5 or more except that one, at -3.7, which was *below* the two truly unanswerable questions (-2.6, -3.5). No threshold could separate them, so the model was replaced rather than the threshold tuned. The report stays in the suite so the scores remain visible.
+The first reranker tried, `Xenova/ms-marco-MiniLM-L-6-v2`, fixed the dog question but refused "How big is the deposit?". its scores, printed by the relevance check (now `tests/eval/relevance.spec.ts`),: every answerable eval question scored 1.5 or more except that one, at -3.7, which was *below* the two truly unanswerable questions (-2.6, -3.5). No threshold could separate them, so the model was replaced rather than the threshold tuned. The scores stay in every run summary, and `relevance.spec.ts` fails if the threshold stops separating the two groups.
 
 bge-reranker-base separated the two groups, but its raw scores are not centred on 0: at a threshold of 0 it refused three real questions. Scores on the eval questions:
 
