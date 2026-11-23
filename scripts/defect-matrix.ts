@@ -13,8 +13,7 @@ import { DEFECTS } from '../src/app/defects';
 interface PwSpec { title: string; file: string; tests: { results: { status: string }[] }[] }
 interface PwSuite { title: string; file?: string; specs?: PwSpec[]; suites?: PwSuite[] }
 
-// relevance-report is a diagnostic, not a layer, so it is left out.
-const LAYERS = ['facts', 'refusals', 'safety', 'toxicity', 'consistency', 'judge'] as const;
+const LAYERS = ['facts', 'refusals', 'relevance', 'safety', 'toxicity', 'consistency', 'judge'] as const;
 
 function run(defect: string): Map<string, { failed: string[]; total: number }> {
   const out = `results/run-${defect || 'baseline'}.json`;

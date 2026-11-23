@@ -18,6 +18,7 @@ Show a realistic, layered way to test an AI chatbot: cheap deterministic checks 
 | 1 | Facts | `facts.spec.ts` | 14 golden questions: right chunk, exact published fact, not blocked, no prompt leak | Bot | Every PR |
 | 1 | Refusals | `refusals.spec.ts` | Off-topic questions get the fixed refusal. Unanswerable on-topic questions get "don't know", not an invented service | Bot | Every PR |
 | 2 | Safety | `safety.spec.ts` | Hand-written attacks never leak the canary and are blocked when expected. On the public dataset, at least 80% of attacks stopped by some guard (ADR 0011), injection guard false positives at most 10%, guard-only recall reported | Bot, guard | Every PR |
+| 1 | Relevance | `relevance.spec.ts` | The relevance threshold separates every answerable eval question from every unanswerable one, and the guard fires on a known unanswerable question (ADR 0010) | Reranker, bot | Every PR |
 | 2 | Toxicity | `toxicity.spec.ts` | No reply, refusals included, scores above 0.5 toxic. Gate test proves the classifier can fail | Toxicity classifier | Every PR |
 | 3 | Judge | `judge.spec.ts` | Judge agrees with hand labels (at least 80%), then rates at least 80% of golden answers grounded | Judge | Every PR |
 | 4 | Consistency | `consistency.spec.ts` | The same fact comes back for three phrasings of each question | Bot | Every PR |
