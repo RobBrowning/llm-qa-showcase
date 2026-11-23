@@ -2,7 +2,7 @@
 
 This is **llm-qa-showcase**: a Playwright + TypeScript eval suite for **Wheelwise**, a fictional bike-hire help chatbot. The bot is a small RAG app running open Hugging Face models locally in Node through Transformers.js.
 
-**Status (updated 2026-11-22):** MVP. App, five test layers, seeded defects and CI exist. First real model runs happen in CI.
+**Status (updated 2026-11-22):** Round 2 done (PR #1): bot fixed one change at a time, full eval green, hold-out 10/12 (both misses are literal keyword checks on correct answers). Guards: injection, scope, relevance, grounding.
 
 ## Hard rule
 
@@ -13,7 +13,8 @@ Never use an em dash or en dash in any file. Use a colon, comma or full stop ins
 - `npm run typecheck` and `npm run check:unit`: must pass before any commit (no models needed)
 - `npm run test:ui`: chat page and API contract, stub mode, seconds
 - `npm run test:eval`: real models, run `npm run data:fetch` first. Slow on first run while models download
-- `npm run test:smoke`: the PR subset
+- `npm run test:holdout`: hold-out set (ADR 0005). Never tune the bot against it
+- `npm run test:smoke`: a quick local subset
 - `npm run eval:defects`: defect matrix, writes `results/defect-matrix.md`
 - `npm start` / `npm run start:stub`: run the chatbot on http://localhost:3100
 
@@ -24,7 +25,7 @@ Never use an em dash or en dash in any file. Use a colon, comma or full stop ins
 - `src/models/hf.ts`: Transformers.js loaders shared by app and evals.
 - `src/eval/`: judge, toxicity classifier, thresholds, data loaders.
 - `data/`: golden set, scope, attacks, consistency, judge calibration.
-- `tests/ui/`: stub mode. `tests/eval/`: real models, one file per layer.
+- `tests/ui/`: stub mode. `tests/eval/`: real models, one file per layer. `tests/holdout/`: fresh questions, kept out of tuning.
 
 ## Rules
 
@@ -32,7 +33,9 @@ Never use an em dash or en dash in any file. Use a colon, comma or full stop ins
 - Thresholds live in `src/eval/config.ts`. Changing one needs a new ADR.
 - Pin every model and dataset to a revision.
 - Any new classifier or judge check needs a gate test that proves it can fail (see `toxicity.spec.ts` and the judge calibration).
-- No retries on the `eval` project. A flaky eval is a finding, not noise.
+- Never edit a hold-out question to make it pass. Fix the bot, then add new hold-out questions (ADR 0005).
+- The hold-out job is report-only in CI (ADR 0012). When it was run for a PR, state its result in the PR description.
+- No retries on the `eval` or `holdout` projects. A flaky eval is a finding, not noise.
 - UI tests run in stub mode and never assert on model wording.
 - Seeded defects stay behind the `DEFECT` env var. Each one is listed in `docs/test-strategy.md` with the layer expected to catch it.
 - Locators: `getByTestId` (attribute `data-test`) or `getByRole`. No CSS chains, no XPath.

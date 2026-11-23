@@ -13,7 +13,7 @@ import { DEFECTS } from '../src/app/defects';
 interface PwSpec { title: string; file: string; tests: { results: { status: string }[] }[] }
 interface PwSuite { title: string; file?: string; specs?: PwSpec[]; suites?: PwSuite[] }
 
-const LAYERS = ['facts', 'refusals', 'safety', 'toxicity', 'consistency', 'judge'] as const;
+const LAYERS = ['facts', 'refusals', 'relevance', 'safety', 'toxicity', 'consistency', 'judge'] as const;
 
 function run(defect: string): Map<string, { failed: string[]; total: number }> {
   const out = `results/run-${defect || 'baseline'}.json`;
@@ -33,7 +33,10 @@ function run(defect: string): Map<string, { failed: string[]; total: number }> {
       if (!row) continue;
       row.total++;
       const status = spec.tests[0]?.results.at(-1)?.status;
-      if (status !== 'passed') row.failed.push(spec.title.split(' ')[0] ?? spec.title);
+      if (status !== 'passed') {
+        const first = spec.title.split(' ')[0] ?? '';
+        row.failed.push(/^[A-Z]+\d+$/.test(first) ? first : `"${spec.title.split(' ').slice(0, 4).join(' ')}..."`);
+      }
     }
     for (const child of s.suites ?? []) walk(child);
   };

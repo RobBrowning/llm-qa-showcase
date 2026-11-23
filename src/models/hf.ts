@@ -1,4 +1,4 @@
-import { env, pipeline } from '@huggingface/transformers';
+import { AutoModelForSequenceClassification, AutoTokenizer, env, pipeline } from '@huggingface/transformers';
 import { MODEL_CACHE_DIR } from '../app/config';
 
 /**
@@ -16,6 +16,8 @@ export interface ModelSpec {
   id: string;
   revision: string;
   dtype: string;
+  /** Number of external weight files for large models (model_q4.onnx_data, _data_1, ...). */
+  externalData?: number;
 }
 
 export interface ChatMessage {
@@ -24,6 +26,8 @@ export interface ChatMessage {
 }
 
 export type Generate = (messages: ChatMessage[], maxNewTokens: number) => Promise<string>;
+/** Relevance of a passage to a query, as a raw logit: above 0 means relevant. */
+export type Rerank = (query: string, passage: string) => Promise<number>;
 export type Classify = (text: string) => Promise<{ label: string; score: number }[]>;
 
 // Transformers.js pipeline overloads are too wide for strict TS, so the
@@ -40,6 +44,7 @@ function load(task: string, spec: ModelSpec): Promise<AnyPipeline> {
     p = (pipeline as unknown as (t: string, m: string, o: object) => Promise<AnyPipeline>)(task, spec.id, {
       revision: spec.revision,
       dtype: spec.dtype,
+      ...(spec.externalData ? { use_external_data_format: spec.externalData } : {}),
     });
     cache.set(key, p);
   }
@@ -62,5 +67,24 @@ export function hfClassifier(spec: ModelSpec): Classify {
     const out = await clf(text, { top_k: null });
     const rows = (Array.isArray(out?.[0]) ? out[0] : out) as { label: string; score: number }[];
     return rows.map((r) => ({ label: String(r.label), score: Number(r.score) }));
+  };
+}
+
+/** Cross-encoder reranker: scores how well a passage answers a query. */
+export function hfReranker(spec: ModelSpec): Rerank {
+  let loaded: Promise<[unknown, unknown]> | undefined;
+  return async (query, passage) => {
+    loaded ??= Promise.all([
+      AutoTokenizer.from_pretrained(spec.id, { revision: spec.revision }),
+      AutoModelForSequenceClassification.from_pretrained(spec.id, {
+        revision: spec.revision,
+        dtype: spec.dtype as 'q8',
+      }),
+    ]);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [tokenizer, model] = (await loaded) as [any, any];
+    const features = tokenizer([query], { text_pair: [passage], padding: true, truncation: true });
+    const out = await model(features);
+    return Number(out.logits.data[0]);
   };
 }

@@ -1,8 +1,9 @@
 {
-  "_about": "Each group asks for one fact several ways. Every phrasing must return the same fact.",
+  "_about": "Each group asks for one fact several ways. Every phrasing must return the same fact. source is the kb chunk every phrasing must retrieve (checked offline by npm run check:unit).",
   "groups": [
     {
       "id": "C01",
+      "source": "hire-and-pricing#bike-types-and-prices",
       "fact": "£40\\.00",
       "questions": [
         "How much is an e-bike for a full day?",
@@ -12,6 +13,7 @@
     },
     {
       "id": "C02",
+      "source": "bookings-and-refunds#deposit",
       "fact": "£50\\.00",
       "questions": [
         "How big is the deposit?",
@@ -21,6 +23,7 @@
     },
     {
       "id": "C03",
+      "source": "rules-and-safety#age-and-id",
       "fact": "\\b18\\b",
       "questions": [
         "How old do you have to be to ride an e-bike?",

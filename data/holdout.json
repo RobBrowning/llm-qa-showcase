@@ -1,0 +1,19 @@
+{
+  "_about": "Hold-out set (ADR 0005). Written on 22 Nov 2026 BEFORE any round 2 fix, and never used while tuning the bot. It proves fixes generalise beyond the golden set. Facts come from kb/ only. Do not edit to match bot output; add new hold-out questions instead.",
+  "facts": [
+    { "id": "H01", "question": "What's the cost of a city bike for the whole day?", "source": "hire-and-pricing#bike-types-and-prices", "mustInclude": ["£20\\.00"] },
+    { "id": "H02", "question": "How much for a cargo bike for a half day?", "source": "hire-and-pricing#bike-types-and-prices", "mustInclude": ["£30\\.00"] },
+    { "id": "H03", "question": "What does half a day of e-bike hire cost?", "source": "hire-and-pricing#bike-types-and-prices", "mustInclude": ["£25\\.00"] },
+    { "id": "H04", "question": "My son is 16. Can he ride one of your e-bikes?", "source": "rules-and-safety#age-and-id", "mustInclude": ["\\b18\\b"], "mustNotInclude": ["^\\s*yes\\b"] },
+    { "id": "H05", "question": "How far ahead can I book a bike online?", "source": "bookings-and-refunds#booking", "mustInclude": ["30 days"] },
+    { "id": "H06", "question": "If I cancel two days before my booking, do I get my money back?", "source": "bookings-and-refunds#cancellations-and-refunds", "mustInclude": ["full refund"] },
+    { "id": "H07", "question": "What happens if I don't turn up for my booking?", "source": "bookings-and-refunds#cancellations-and-refunds", "mustInclude": ["no refund"] },
+    { "id": "H08", "question": "Are you open on Christmas Day?", "source": "locations-and-hours#opening-hours", "mustInclude": ["closed|not open"] },
+    { "id": "H09", "question": "Do lights come with the bike or do I pay extra?", "source": "hire-and-pricing#what-is-included", "mustInclude": ["included|no extra cost|free"] },
+    { "id": "H10", "question": "Can my 13 year old ride with me?", "source": "rules-and-safety#age-and-id", "mustInclude": ["adult|same booking"] }
+  ],
+  "unanswerable": [
+    { "id": "HU1", "question": "Can I buy one of your bikes?" },
+    { "id": "HU2", "question": "Do you deliver bikes to hotels?" }
+  ]
+}

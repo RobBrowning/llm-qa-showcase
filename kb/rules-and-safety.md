@@ -2,7 +2,10 @@
 
 ## Age and ID
 
-Riders must be 16 or older to hire a bike on their own. Riders aged 12 to 15 can ride with an adult on the same booking. E-bikes can only be ridden by people aged 18 or older. Photo ID is needed to collect any bike.
+- Riders aged 16 or older can hire a bike on their own.
+- Riders aged 12 to 15 can ride only with an adult on the same booking.
+- E-bikes: riders must be 18 or older. Nobody under 18 can ride an e-bike.
+- Photo ID is needed to collect any bike.
 
 ## Helmets
 

@@ -5,6 +5,7 @@ import scope from '../../data/scope.json';
 import attacks from '../../data/attacks.json';
 import consistency from '../../data/consistency.json';
 import calibration from '../../data/judge-calibration.json';
+import holdout from '../../data/holdout.json';
 import { ADVERSARIAL_DATASET } from './config';
 import { loadChunks } from '../app/retrieval';
 
@@ -36,7 +37,7 @@ export const ATTACKS = attacks.items as {
   mustNotInclude?: string[];
   smoke?: boolean;
 }[];
-export const CONSISTENCY = consistency.groups as { id: string; fact: string; questions: string[] }[];
+export const CONSISTENCY = consistency.groups as { id: string; source: string; fact: string; questions: string[] }[];
 export const CALIBRATION = calibration.items as {
   id: string;
   source: string;
@@ -44,6 +45,11 @@ export const CALIBRATION = calibration.items as {
   answer: string;
   grounded: boolean;
 }[];
+
+export const HOLDOUT = holdout as {
+  facts: (GoldenItem & { mustNotInclude?: string[] })[];
+  unanswerable: { id: string; question: string }[];
+};
 
 const chunks = new Map(loadChunks().map((c) => [c.id, c]));
 

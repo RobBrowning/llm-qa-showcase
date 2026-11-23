@@ -16,24 +16,33 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 240
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
-      - uses: actions/cache@v4
+      # Restore and save separately: a plain cache step only saves when the
+      # job passes, so a failing eval re-downloaded every model on every run.
+      - uses: actions/cache/restore@v5
+        id: models
         with:
           path: .cache/models
           key: models-all-${{ hashFiles('src/app/config.ts', 'src/eval/config.ts') }}
+          restore-keys: models-
       - run: npm run models:warm
+      - uses: actions/cache/save@v5
+        if: steps.models.outputs.cache-hit != 'true'
+        with:
+          path: .cache/models
+          key: ${{ steps.models.outputs.cache-primary-key }}
       - run: npm run data:fetch
       - run: npm run eval:defects -- ${{ inputs.defects }}
         env:
           CI: 'true'
       - run: cat results/defect-matrix.md >> "$GITHUB_STEP_SUMMARY"
         if: ${{ !cancelled() }}
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         if: ${{ !cancelled() }}
         with:
           name: defect-matrix

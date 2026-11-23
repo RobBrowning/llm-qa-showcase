@@ -18,6 +18,7 @@
 - [ ] No threshold lowered, fact removed or regex loosened without a new ADR
 - [ ] Model ids and revisions pinned
 - [ ] New classifier or judge checks have a gate test that proves they can fail
+- [ ] If the hold-out set was run, its result is stated above (ADR 0012)
 - [ ] Seeded defects stay behind `DEFECT`; new ones are listed in `docs/test-strategy.md`
 - [ ] Locators use `getByTestId` or `getByRole`: no CSS chains, no XPath
 - [ ] No `waitForTimeout`, no `test.only`, no unexplained `test.skip` or `test.fixme`
