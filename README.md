@@ -84,7 +84,7 @@ The first full eval found real bot mistakes. [PR #1](https://github.com/RobBrown
 
 **What didn't work** (kept in the PR history): a stricter prompt for "don't know" made the bot refuse four real questions; lowering the injection guard's threshold changed nothing; the first reranker (ms-marco MiniLM) scored "How big is the deposit?" below truly unanswerable questions.
 
-**Hold-out: 10/12.** Both failures are correct answers that the keyword check didn't recognise: "Lights come with every hire" (the check wanted "included" or "free") and a 13 year old can ride "provided both of you book together" (it wanted "same booking"). Word-matching checks reject correct paraphrases. The hold-out questions are left unchanged, as ADR 0005 requires; the next round's hold-out set will be graded by the judge as well.
+**Hold-out: 10/12.** Both failures are correct answers that the keyword check didn't recognise: "Lights come with every hire" (the check wanted "included" or "free") and a 13 year old can ride "provided both of you book together" (it wanted "same booking"). Word-matching checks reject correct paraphrases. The hold-out questions are left unchanged, as ADR 0005 requires, and the hold-out job is report-only in CI (ADR 0012), so this recorded result doesn't keep main red. The next round's hold-out set will be graded by the judge as well.
 
 **Known limits:** the injection guard is English-only (German attacks blocked 4/9) and misses some English ones; the relevance threshold rests on a narrow gap between two groups of eval questions; the judge and the bot are small models running on CPU.
 

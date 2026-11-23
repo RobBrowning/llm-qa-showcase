@@ -2,7 +2,8 @@ name: CI
 
 # Every PR and push: offline checks, UI tests and the full eval on real models
 # (about 4 minutes once models are cached). The hold-out set runs on main and
-# on PRs labelled run-holdout only, so it stays out of the tuning loop.
+# on PRs labelled run-holdout only, so it stays out of the tuning loop, and it
+# is report-only (ADR 0012).
 # ADR 0001 and ADR 0005.
 
 on:
@@ -106,7 +107,13 @@ jobs:
           key: models-all-${{ hashFiles('src/app/config.ts', 'src/eval/config.ts') }}
           restore-keys: models-
       - run: npm run models:warm -- bot
+      # Report-only (ADR 0012): a hold-out miss is evidence for the round, not a
+      # regression, so it never fails the build. It is surfaced as a warning.
       - run: npm run test:holdout
+        id: holdout
+        continue-on-error: true
+      - if: steps.holdout.outcome == 'failure'
+        run: echo "::warning title=hold-out (report-only, ADR 0012)::Some hold-out questions failed. See the run summary and report."
       - uses: actions/upload-artifact@v6
         if: ${{ !cancelled() }}
         with:

@@ -19,6 +19,7 @@ You are reviewing a pull request in llm-qa-showcase, a Playwright + TypeScript e
 - No weakened checks: a removed `mustInclude` fact, a regex loosened so a wrong answer now matches, an assertion removed or replaced by a weaker one, or a threshold in `src/eval/config.ts` lowered without a new ADR.
 - No golden answer, calibration label or expected fact changed to match what the model now says. Expected values come from `kb/`, never from model output. If `kb/` and `data/` disagree, `kb/` wins.
 - No hold-out question (`data/holdout.json`) edited, removed or loosened. New hold-out questions may be added.
+- The hold-out job is report-only in CI (ADR 0012). If a PR ran it, the PR description must state the result. A missing result is a **Major**; a recorded hold-out failure on its own is not.
 - No retries added to the `eval` or `holdout` projects, and no `test.skip`, `test.fixme` or `test.only` without a written reason in the test and the PR.
 - Model ids and revisions stay pinned. An unpinned model, or a new model without a revision, is a Blocker.
 - A new check that can only pass has no value: any new classifier or judge check needs a gate test proving it fails on a known bad input, as in `toxicity.spec.ts` and the judge calibration.
